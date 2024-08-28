@@ -1,22 +1,48 @@
+"use client";
+
 import Header from "@/components/Header";
+import { useEffect, useState } from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import PostItem from "@/components/PostItem";
 import SidebarCard from "@/components/SideBarCard";
-import { getAllPosts } from "@/lib/posts";
+import { usePosts } from "@/context/PostsContext";
 
 export default function Home() {
-  const posts = getAllPosts();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [posts, setPosts] = useState([]);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const postsPerPage = 5;
 
-  const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  useEffect(() => {
+    async function fetchPostsByPage() {
+      const response = await fetch(
+        `/api/blog/get-posts-by-page?page=${currentPage}&postsPerPage=${postsPerPage}`
+      );
+      const data = await response.json();
+      setPosts(data.posts);
+      setTotalPosts(data.totalPosts);
+    }
+    fetchPostsByPage();
+  }, [currentPage]);
 
-  const uniqueTags = Array.from(new Set(posts.flatMap((post) => post.tags)));
+  const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+  const { tags } = usePosts();
 
   return (
-    // <div className="bg-[url('/background/light-mode-background.png')] dark:bg-[url('/background/dark-mode-background.png')] bg-cover bg-center min-h-screen">
     <div>
       <Header />
       <main className="container pt-8 flex gap-8 text-primary">
         <div className="w-full md:w-3/4">
-          {sortedPosts.map((post) => (
+          {posts.map((post) => (
             <PostItem
               key={post.slug}
               slug={post.slug}
@@ -26,15 +52,46 @@ export default function Home() {
               date={post.date}
             />
           ))}
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage <= 1}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }).map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    href="#"
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={currentPage === index + 1 ? "font-bold" : ""}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage >= totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
         <div className="hidden md:block md:w-1/4">
           <div className="sticky top-8">
-            <SidebarCard
-              type="tags"
-              title="Tags"
-              contents={uniqueTags}
-              path="/tag"
-            />
+            <SidebarCard type="tags" title="Tags" contents={tags} path="/tag" />
           </div>
         </div>
       </main>
