@@ -8,9 +8,19 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import Link from "next/link";
-import { slugify } from "@/lib/posts";
 
 export default function MenuSheet({ title, contents, path }) {
+  function kababify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "")
+      .replace(/\-\-+/g, "-")
+      .replace(/^-+/, "")
+      .replace(/-+$/, "");
+  }
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -29,8 +39,8 @@ export default function MenuSheet({ title, contents, path }) {
         </SheetHeader>
         {contents.map((content) => (
           <Link
-            key={slugify(content)}
-            href={`${path}/#${slugify(content)}`}
+            key={kababify(content)}
+            href={`${path}/#${kababify(content)}`}
             replace
           >
             {content}

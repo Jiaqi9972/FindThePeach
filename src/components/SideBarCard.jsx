@@ -1,10 +1,19 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Tags } from "lucide-react";
 import Tag from "./Tag";
-import { slugify } from "@/lib/posts";
 
 export default function SidebarCard({ title, contents, path, type }) {
+  function kababify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "")
+      .replace(/\-\-+/g, "-")
+      .replace(/^-+/, "")
+      .replace(/-+$/, "");
+  }
+
   return (
     <>
       <Card className="hidden md:block">
@@ -15,8 +24,8 @@ export default function SidebarCard({ title, contents, path, type }) {
           {type === "menu" &&
             contents.map((content) => (
               <Link
-                key={slugify(content)}
-                href={`${path}/#${slugify(content)}`}
+                key={kababify(content)}
+                href={`${path}/#${kababify(content)}`}
                 replace
               >
                 {content}
@@ -32,8 +41,8 @@ export default function SidebarCard({ title, contents, path, type }) {
           {type === "year" &&
             contents.map((content) => (
               <Link
-                key={slugify(content)}
-                href={`${path}/#${slugify(content)}`}
+                key={kababify(content)}
+                href={`${path}/#${kababify(content)}`}
                 replace
               >
                 {content}

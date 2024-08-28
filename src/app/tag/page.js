@@ -1,13 +1,24 @@
+"use client";
+
 import Header from "@/components/Header";
 import Tag from "@/components/Tag";
 import { Tags } from "lucide-react";
 import PostTitle from "@/components/PostTitle";
-import { getAllPosts, slugify } from "@/lib/posts";
+import { usePosts } from "@/context/PostsContext";
 
 function TagPage() {
-  const posts = getAllPosts();
+  const { posts, tags } = usePosts();
 
-  const uniqueTags = Array.from(new Set(posts.flatMap((post) => post.tags)));
+  function kababify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "")
+      .replace(/\-\-+/g, "-")
+      .replace(/^-+/, "")
+      .replace(/-+$/, "");
+  }
 
   return (
     <div>
@@ -19,14 +30,14 @@ function TagPage() {
             <h1>Tags</h1>
           </div>
           <div className="flex flex-row flex-wrap justify-start gap-4 mt-4">
-            {uniqueTags?.map((tag) => (
+            {tags?.map((tag) => (
               <Tag tag={tag} key={tag} />
             ))}
           </div>
         </div>
         <div className="flex flex-col gap-8">
-          {uniqueTags?.map((tag) => (
-            <div key={tag} id={slugify(tag)} className="pt-8">
+          {tags?.map((tag) => (
+            <div key={tag} id={kababify(tag)} className="pt-8">
               <h2 className="text-2xl font-bold mb-4">{tag}</h2>
               <div className="flex flex-col gap-4">
                 {posts

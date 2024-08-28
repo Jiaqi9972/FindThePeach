@@ -1,12 +1,13 @@
+"use client";
+
 import ReactMarkdown from "react-markdown";
 import Header from "@/components/Header";
 import SidebarCard from "@/components/SideBarCard";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import rehypeSlug from "rehype-slug";
 import Tag from "@/components/Tag";
 import { Calendar, Tags } from "lucide-react";
 import MenuSheet from "@/components/MenuSheet";
-import { getPostBySlug } from "@/lib/posts";
 
 const CustomH1 = ({ node, ...props }) => (
   <h2 className="text-2xl pb-4" {...props} />
@@ -17,16 +18,36 @@ const CustomParagraph = ({ node, ...props }) => (
 );
 
 export default function PostPage({ params }) {
+  const [post, setPost] = useState(null);
+  const [headings, setHeadings] = useState([]);
   const { slug } = params;
 
-  const post = getPostBySlug(slug);
+  useEffect(() => {
+    if (slug) {
+      async function fetchPost() {
+        const response = await fetch(`/api/blog/get-post-by-slug?slug=${slug}`);
+        const data = await response.json();
 
-  const headings = [];
-  const regex = /^# (.*$)/gm;
-  let match;
+        if (!data.error) {
+          setPost(data);
+          const extractedHeadings = [];
+          const regex = /^# (.*$)/gm;
+          let match;
+          while ((match = regex.exec(data.content)) !== null) {
+            extractedHeadings.push(match[1]);
+          }
+          setHeadings(extractedHeadings);
+        } else {
+          console.error("Error fetching post:", data.error);
+        }
+      }
 
-  while ((match = regex.exec(post.content)) !== null) {
-    headings.push(match[1]);
+      fetchPost();
+    }
+  }, [slug]);
+
+  if (!post) {
+    return <div>Loading...</div>;
   }
 
   return (

@@ -1,15 +1,25 @@
 import Link from "next/link";
 import { badgeVariants } from "./ui/badge";
-import { slugify } from "@/lib/posts";
 
 export default function Tag({ tag, count }) {
+  function kababify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "")
+      .replace(/\-\-+/g, "-")
+      .replace(/^-+/, "")
+      .replace(/-+$/, "");
+  }
+
   return (
     <Link
       className={badgeVariants({
         variant: "outline",
         className: "no-underline rounded-md",
       })}
-      href={`/tag/#${slugify(tag)}`}
+      href={`/tag/#${kababify(tag)}`}
       replace
     >
       {tag} {count ? `(${count})` : null}

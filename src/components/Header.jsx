@@ -1,7 +1,8 @@
 "use client";
+
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import { ArrowBigUp, Github, Menu, Moon, Sun } from "lucide-react";
+import { ArrowBigUp, Github, LogOut, Menu, Moon, Sun } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -11,6 +12,7 @@ import {
 } from "./ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 
 function Header() {
   const { theme, setTheme } = useTheme();
@@ -26,6 +28,8 @@ function Header() {
     });
   };
 
+  const { data: session } = useSession();
+
   return (
     <header className="py-4 border-b">
       <Button
@@ -36,6 +40,20 @@ function Header() {
       >
         <ArrowBigUp />
       </Button>
+      {session?.user && (
+        <Button
+          variant="secondary"
+          size="icon"
+          className="fixed bottom-16 right-4"
+          onClick={() =>
+            signOut({
+              callbackUrl: "/",
+            })
+          }
+        >
+          <LogOut />
+        </Button>
+      )}
       <div className="container flex flex-row justify-between items-center">
         <Sheet>
           <SheetTrigger asChild>

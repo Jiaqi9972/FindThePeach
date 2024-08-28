@@ -1,10 +1,12 @@
+"use client";
+
 import Header from "@/components/Header";
 import PostTitle from "@/components/PostTitle";
 import SidebarCard from "@/components/SideBarCard";
-import { getAllPosts } from "@/lib/posts";
+import { usePosts } from "@/context/PostsContext";
 
 function ArchivePage() {
-  const posts = getAllPosts();
+  const { posts } = usePosts();
 
   const postsByYear = posts.reduce((groupedPosts, post) => {
     const year = post.year;
