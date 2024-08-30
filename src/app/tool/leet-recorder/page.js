@@ -49,6 +49,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
+import Footer from "@/components/Footer";
 
 const recordFormSchema = z.object({
   problemId: z.string().min(0, { message: "Problem ID is required" }),
@@ -345,7 +346,7 @@ function LeetRecorderPage() {
         {
           label: "Nums",
           data: data,
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
+          backgroundColor: "#9caec9",
         },
       ],
     };
@@ -441,19 +442,6 @@ function LeetRecorderPage() {
         const response = await fetch("/api/leet-recorder/get-nums");
         const result = await response.json();
 
-        // Assuming result is an array of objects like [{id: "2024-08", Easy: 10, Medium: 5, Hard: 3, total: 18}, ...]
-        // setCounts((prevCounts) => ({
-        //   ...prevCounts,
-        //   ...Object.keys(result).reduce((acc, key) => {
-        //     acc[key] = {
-        //       Easy: result[key].Easy || 0,
-        //       Medium: result[key].Medium || 0,
-        //       Hard: result[key].Hard || 0,
-        //       Total: result[key].Total || 0,
-        //     };
-        //     return acc;
-        //   }, {}),
-        // }));
         setCounts((prevCounts) => ({
           ...prevCounts,
           ...result.reduce((acc, item) => {
@@ -501,7 +489,7 @@ function LeetRecorderPage() {
   return (
     <div>
       <Header />
-      <main className="container flex flex-col items-center justify-center">
+      <main className="container flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-4">
         {session?.user && (
           <>
             <Sheet>
@@ -695,21 +683,30 @@ function LeetRecorderPage() {
           </>
         )}
 
-        <div>
-          <h2>
-            Total Problems Solved: {totalCounts.Total} (Easy: {totalCounts.Easy}
-            , Medium: {totalCounts.Medium}, Hard: {totalCounts.Hard})
+        <div className="flex flex-row gap-8 pb-12 text-xl">
+          <h2 className="flex flex-col">
+            <span>Total</span>
+            <span>Solved: {totalCounts.Total}</span>
+            <span style={{ color: "#28a745" }}>Easy: {totalCounts.Easy}</span>
+            <span style={{ color: "#f0ad4e" }}>
+              Medium: {totalCounts.Medium}
+            </span>
+            <span style={{ color: "#dc3545" }}>Hard: {totalCounts.Hard}</span>
           </h2>
-          <h2>
-            {currentMonth.toISOString().slice(0, 7)} Problems Solved:{" "}
-            {monthCounts.Total} (Easy: {monthCounts.Easy}, Medium:{" "}
-            {monthCounts.Medium}, Hard: {monthCounts.Hard})
+          <h2 className="flex flex-col">
+            <span>{currentMonth.toISOString().slice(0, 7)}</span>
+            <span>Solved: {monthCounts.Total} </span>
+            <span style={{ color: "#28a745" }}>Easy: {monthCounts.Easy} </span>
+            <span style={{ color: "#f0ad4e" }}>
+              Medium: {monthCounts.Medium}{" "}
+            </span>
+            <span style={{ color: "#dc3545" }}>Hard: {monthCounts.Hard} </span>
           </h2>
         </div>
 
         <div className="flex flex-row items-center justify-between w-full max-w-4xl">
           <Button
-            variant="secondary"
+            variant="outline"
             onClick={handlePrevMonth}
             className="p-2"
             size="icon"
@@ -727,7 +724,7 @@ function LeetRecorderPage() {
             />
           </div>
           <Button
-            variant="secondary"
+            variant="outline"
             onClick={handleNextMonth}
             className="p-2"
             size="icon"
@@ -736,7 +733,7 @@ function LeetRecorderPage() {
           </Button>
         </div>
         {records.find((record) => record.date === currentDay) && (
-          <div className="mt-4">
+          <div className="pt-12">
             <Table>
               <TableCaption>Records for {currentDay}</TableCaption>
               <TableHeader>
@@ -784,6 +781,7 @@ function LeetRecorderPage() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

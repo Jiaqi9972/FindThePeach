@@ -13,9 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { getSession, signIn, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -57,8 +59,9 @@ export default function SignIn() {
   }, [status, router]);
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <main className="container flex flex-col">
+    <div>
+      <Header />
+      <main className="container flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -96,6 +99,7 @@ export default function SignIn() {
           </form>
         </Form>
       </main>
+      <Footer />
     </div>
   );
 }

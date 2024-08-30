@@ -16,7 +16,7 @@ export default function Tag({ tag, count }) {
   return (
     <Link
       className={badgeVariants({
-        variant: "outline",
+        variant: "secondary",
         className: "no-underline rounded-md",
       })}
       href={`/tag/#${kababify(tag)}`}

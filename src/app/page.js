@@ -1,100 +1,26 @@
-"use client";
-
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { useEffect, useState } from "react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import PostItem from "@/components/PostItem";
-import SidebarCard from "@/components/SideBarCard";
-import { usePosts } from "@/context/PostsContext";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [posts, setPosts] = useState([]);
-  const [totalPosts, setTotalPosts] = useState(0);
-  const postsPerPage = 5;
-
-  useEffect(() => {
-    async function fetchPostsByPage() {
-      const response = await fetch(
-        `/api/blog/get-posts-by-page?page=${currentPage}&postsPerPage=${postsPerPage}`
-      );
-      const data = await response.json();
-      setPosts(data.posts);
-      setTotalPosts(data.totalPosts);
-    }
-    fetchPostsByPage();
-  }, [currentPage]);
-
-  const totalPages = Math.ceil(totalPosts / postsPerPage);
-
-  const { tags } = usePosts();
-
   return (
     <div>
       <Header />
-      <main className="container pt-8 flex gap-8 text-primary">
-        <div className="w-full md:w-3/4">
-          {posts.map((post) => (
-            <PostItem
-              key={post.slug}
-              slug={post.slug}
-              title={post.title}
-              description={post.description}
-              tags={post.tags}
-              date={post.date}
-            />
-          ))}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage <= 1}
-                />
-              </PaginationItem>
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <PaginationItem key={index}>
-                  <PaginationLink
-                    href="#"
-                    onClick={() => setCurrentPage(index + 1)}
-                    className={currentPage === index + 1 ? "font-bold" : ""}
-                  >
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
-                  disabled={currentPage >= totalPages}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-        <div className="hidden md:block md:w-1/4">
-          <div className="sticky top-8">
-            <SidebarCard type="tags" title="Tags" contents={tags} path="/tag" />
-          </div>
-        </div>
+      <main className="container flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] gap-8 text-center">
+        <h1 className="text-3xl">Hello, I'm Jackie!</h1>
+        <span className="text-2xl">
+          A full-stack developer with passion to build interesting applcations.
+        </span>
+        <span className="text-xl">
+          This is my personal blog to post some articles and implement some
+          useful tools.
+        </span>
+        <Button variant="secondary">
+          <Link href="/posts">Start to read...</Link>
+        </Button>
       </main>
+      <Footer />
     </div>
   );
 }

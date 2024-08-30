@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PostTitle from "@/components/PostTitle";
 import SidebarCard from "@/components/SideBarCard";
@@ -22,7 +23,7 @@ function ArchivePage() {
   return (
     <div>
       <Header />
-      <main className="container pt-8 flex gap-8  text-primary">
+      <main className="container flex gap-8 mt-8">
         <div className="w-full md:w-3/4">
           {sortedYears.map((year) => (
             <div key={year} className="pb-16">
@@ -54,6 +55,7 @@ function ArchivePage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

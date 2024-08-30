@@ -33,7 +33,7 @@ function Header() {
   return (
     <header className="py-4 border-b">
       <Button
-        variant="secondary"
+        variant="outline"
         size="icon"
         className="fixed bottom-4 right-4"
         onClick={scrollToTop}
@@ -68,6 +68,7 @@ function Header() {
             <Link href="/" className="text-2xl font-bold">
               FindThePeach
             </Link>
+            <Link href="/posts">Posts</Link>
             <Link href="/archive">Archive</Link>
             <Link href="/tag">Tags</Link>
             <Link href="/tool">Tools</Link>
@@ -83,6 +84,13 @@ function Header() {
               <Link href="/" legacyBehavior passHref>
                 <NavigationMenuLink className="text-xl font-bold">
                   FindThePeach
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/posts" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Posts
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
@@ -118,7 +126,7 @@ function Header() {
         </NavigationMenu>
         <div>
           <Button variant="ghost" size="icon">
-            <a href="https://github.com/Jiaqi9972">
+            <a href="https://github.com/Jiaqi9972/FindThePeach">
               <Github />
             </a>
           </Button>
