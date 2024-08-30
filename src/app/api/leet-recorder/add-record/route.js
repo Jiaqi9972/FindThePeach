@@ -38,7 +38,6 @@ export async function POST(req) {
 
     // save to the 'problems' collection
     const problemDocRef = doc(collection(db, "problems"), problemId);
-    console.log(problemDocRef);
     await setDoc(problemDocRef, {
       problemId,
       cnLink,

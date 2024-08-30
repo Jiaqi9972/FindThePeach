@@ -8,7 +8,7 @@ export default function Home() {
     <div>
       <Header />
       <main className="container flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] gap-8 text-center">
-        <h1 className="text-3xl">Hello, I'm Jackie!</h1>
+        <h1 className="text-3xl">Hello, I&apos;m Jackie!</h1>
         <span className="text-2xl">
           A full-stack developer with passion to build interesting applcations.
         </span>

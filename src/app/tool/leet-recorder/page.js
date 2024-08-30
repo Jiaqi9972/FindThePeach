@@ -277,7 +277,7 @@ function LeetRecorderPage() {
 
     if (cnLink) fetchLeetcodeData(cnLink);
     else if (enLink) fetchLeetcodeData(enLink);
-  }, [cnLink, enLink]);
+  }, [cnLink, enLink, recordForm]);
 
   // chart
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -419,7 +419,7 @@ function LeetRecorderPage() {
         fetchProblemData(problemId);
       }
     });
-  }, [currentDay]);
+  }, [currentDay, records, problemData]);
 
   // fetch counts
   const [counts, setCounts] = useState({});
