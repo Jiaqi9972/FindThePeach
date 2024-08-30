@@ -137,57 +137,6 @@ function LeetRecorderPage() {
     }
   };
 
-  const fetchLeetcodeData = async (link) => {
-    if (!link) return;
-
-    try {
-      const response = await fetch(
-        `/api/leet-recorder/get-leetcode-data?link=${link}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-
-        if (data.question) {
-          const {
-            questionFrontendId,
-            title,
-            titleSlug,
-            translatedTitle,
-            difficulty,
-          } = data.question;
-
-          recordForm.setValue("problemId", questionFrontendId);
-          recordForm.setValue("title", title);
-          recordForm.setValue("translatedTitle", translatedTitle);
-          recordForm.setValue("difficulty", difficulty);
-          recordForm.setValue(
-            "cnLink",
-            link.includes("leetcode.cn")
-              ? link
-              : `https://leetcode.cn/problems/${titleSlug}/`
-          );
-          recordForm.setValue(
-            "enLink",
-            link.includes("leetcode.com")
-              ? link
-              : `https://leetcode.com/problems/${titleSlug}/`
-          );
-        }
-      } else {
-        console.error("Failed to fetch problem data");
-      }
-    } catch (error) {
-      console.error("Error fetching problem data:", error);
-    }
-  };
-
   const onSubmitFile = async (data) => {
     const file = data.file[0];
 
@@ -271,13 +220,64 @@ function LeetRecorderPage() {
     });
   };
 
+  const cnLink = recordForm.watch("cnLink");
+  const enLink = recordForm.watch("enLink");
+
   useEffect(() => {
-    const cnLink = recordForm.watch("cnLink");
-    const enLink = recordForm.watch("enLink");
+    const fetchLeetcodeData = async (link) => {
+      if (!link) return;
+
+      try {
+        const response = await fetch(
+          `/api/leet-recorder/get-leetcode-data?link=${link}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.question) {
+            const {
+              questionFrontendId,
+              title,
+              titleSlug,
+              translatedTitle,
+              difficulty,
+            } = data.question;
+
+            recordForm.setValue("problemId", questionFrontendId);
+            recordForm.setValue("title", title);
+            recordForm.setValue("translatedTitle", translatedTitle);
+            recordForm.setValue("difficulty", difficulty);
+            recordForm.setValue(
+              "cnLink",
+              link.includes("leetcode.cn")
+                ? link
+                : `https://leetcode.cn/problems/${titleSlug}/`
+            );
+            recordForm.setValue(
+              "enLink",
+              link.includes("leetcode.com")
+                ? link
+                : `https://leetcode.com/problems/${titleSlug}/`
+            );
+          }
+        } else {
+          console.error("Failed to fetch problem data");
+        }
+      } catch (error) {
+        console.error("Error fetching problem data:", error);
+      }
+    };
 
     if (cnLink) fetchLeetcodeData(cnLink);
     else if (enLink) fetchLeetcodeData(enLink);
-  }, [recordForm.watch("cnLink"), recordForm.watch("enLink")]);
+  }, [cnLink, enLink]);
 
   // chart
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -299,27 +299,27 @@ function LeetRecorderPage() {
     );
   };
 
-  const fetchRecordsByMonth = async (month) => {
-    const year = month.getFullYear();
-    const monthFormatted = String(month.getMonth() + 1).padStart(2, "0");
-
-    const res = await fetch(
-      `/api/leet-recorder/get-records-by-month?year=${year}&month=${monthFormatted}`
-    );
-
-    if (res.ok) {
-      const data = await res.json();
-      setRecords(data);
-
-      const monthDates = generateMonthDates(month);
-      const chartData = transformRecordsToChartData(data, monthDates);
-      setChartData(chartData);
-    } else {
-      console.error("Failed to fetch records");
-    }
-  };
-
   useEffect(() => {
+    const fetchRecordsByMonth = async (month) => {
+      const year = month.getFullYear();
+      const monthFormatted = String(month.getMonth() + 1).padStart(2, "0");
+
+      const res = await fetch(
+        `/api/leet-recorder/get-records-by-month?year=${year}&month=${monthFormatted}`
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        setRecords(data);
+
+        const monthDates = generateMonthDates(month);
+        const chartData = transformRecordsToChartData(data, monthDates);
+        setChartData(chartData);
+      } else {
+        console.error("Failed to fetch records");
+      }
+    };
+
     fetchRecordsByMonth(currentMonth);
   }, [currentMonth]);
 
