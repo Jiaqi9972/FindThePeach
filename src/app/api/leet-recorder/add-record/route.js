@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { db } from "@/config/firebase";
+import { auth, db } from "@/config/firebase";
 import {
   collection,
   doc,
@@ -10,12 +10,11 @@ import {
   arrayUnion,
   increment,
 } from "firebase/firestore";
-import { getServerSession } from "next-auth";
 
 export async function POST(req) {
-  const session = await getServerSession(req);
+  const user = auth.currentUser;
 
-  if (!session) {
+  if (!user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },

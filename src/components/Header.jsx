@@ -2,7 +2,15 @@
 
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import { ArrowBigUp, Github, LogOut, Menu, Moon, Sun } from "lucide-react";
+import {
+  ArrowBigUp,
+  Github,
+  Loader,
+  LogOut,
+  Menu,
+  Moon,
+  Sun,
+} from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -12,13 +20,22 @@ import {
 } from "./ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { auth } from "@/config/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function Header() {
   const { theme, setTheme } = useTheme();
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+    console.log(theme);
   };
 
   const scrollToTop = () => {
@@ -28,7 +45,8 @@ function Header() {
     });
   };
 
-  const { data: session } = useSession();
+  const user = auth.currentUser;
+  const router = useRouter();
 
   return (
     <header className="py-4 border-b">
@@ -40,16 +58,15 @@ function Header() {
       >
         <ArrowBigUp />
       </Button>
-      {session?.user && (
+      {user && (
         <Button
           variant="secondary"
           size="icon"
           className="fixed bottom-16 right-4"
-          onClick={() =>
-            signOut({
-              callbackUrl: "/",
-            })
-          }
+          onClick={() => {
+            signOut(auth);
+            router.push("/");
+          }}
         >
           <LogOut />
         </Button>
@@ -130,9 +147,15 @@ function Header() {
               <Github />
             </a>
           </Button>
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === "dark" ? <Moon /> : <Sun />}
-          </Button>
+          {mounted ? (
+            <Button variant="ghost" size="icon" onClick={toggleTheme}>
+              {theme === "dark" ? <Moon /> : <Sun />}
+            </Button>
+          ) : (
+            <Button variant="ghost" size="icon">
+              <Loader />
+            </Button>
+          )}
         </div>
       </div>
     </header>

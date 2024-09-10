@@ -48,8 +48,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSession } from "next-auth/react";
 import Footer from "@/components/Footer";
+import { auth } from "@/config/firebase";
 
 const recordFormSchema = z.object({
   problemId: z.string().min(0, { message: "Problem ID is required" }),
@@ -80,7 +80,7 @@ ChartJS.register(
 );
 
 function LeetRecorderPage() {
-  const { data: session } = useSession();
+  const user = auth.currentUser;
 
   const recordForm = useForm({
     resolver: zodResolver(recordFormSchema),
@@ -490,7 +490,7 @@ function LeetRecorderPage() {
     <div>
       <Header />
       <main className="container flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-4">
-        {session?.user && (
+        {user && (
           <>
             <Sheet>
               <SheetTrigger asChild>

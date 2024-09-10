@@ -3,7 +3,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/provider/ThemeProvider";
 import { PostsProvider } from "@/context/PostsContext";
 import { Toaster } from "@/components/ui/toaster";
-import NextAuthProvider from "@/provider/NextAuthProvider";
 
 const firaCode = Fira_Code({ subsets: ["latin"] });
 
@@ -18,15 +17,14 @@ export default function RootLayout({ children }) {
       <body className={firaCode.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
-          <NextAuthProvider>
-            <PostsProvider>
-              {children}
-              <Toaster />
-            </PostsProvider>
-          </NextAuthProvider>
+          <PostsProvider>
+            {children}
+            <Toaster />
+          </PostsProvider>
         </ThemeProvider>
       </body>
     </html>
