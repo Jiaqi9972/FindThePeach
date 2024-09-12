@@ -32,7 +32,7 @@ export default function Home() {
         <ShapeEffect count={20} sizes={[30, 60]} />
       </div>
 
-      {/* Footer with z-20 to ensure it stays above ShapeEffect */}
+      {/* Footer with z-15 to ensure it stays above ShapeEffect */}
       <footer className="relative z-15">
         <Footer />
       </footer>
