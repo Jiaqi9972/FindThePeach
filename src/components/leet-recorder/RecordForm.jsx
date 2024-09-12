@@ -69,8 +69,8 @@ export default function RecordForm() {
   });
 
   /*
-          Function to get leetcode problem details and update the form
-       */
+    Function to get leetcode problem details and update the form
+  */
   const cnLink = recordForm.watch("cnLink");
   const enLink = recordForm.watch("enLink");
 
@@ -131,8 +131,8 @@ export default function RecordForm() {
   }, [cnLink, enLink, recordForm]);
 
   /*
-          Upload records csv file
-      */
+      Upload records csv file
+  */
   const fileForm = useForm({
     resolver: zodResolver(fileFormSchema),
     defaultValues: {
@@ -141,8 +141,8 @@ export default function RecordForm() {
   });
 
   /*
-          Add single record
-      */
+      Add single record
+  */
   const onSubmitRecord = async (data) => {
     try {
       const response = await fetch("/api/leet-recorder/add-record", {
@@ -176,8 +176,8 @@ export default function RecordForm() {
   };
 
   /*
-          Delete single record
-      */
+      Delete single record
+  */
   const deleteRecord = async (problemId, currentDay) => {
     try {
       const response = await fetch("/api/leet-recorder/delete-record", {
@@ -201,8 +201,8 @@ export default function RecordForm() {
   };
 
   /*
-          Add multiple records with csv file
-      */
+      Add multiple records with csv file
+  */
   const onSubmitFile = async (data) => {
     const file = data.file[0];
 
