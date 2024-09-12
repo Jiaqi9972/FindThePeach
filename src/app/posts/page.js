@@ -11,10 +11,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import PostItem from "@/components/PostItem";
-import SidebarCard from "@/components/SideBarCard";
+import PostItem from "@/components/blog/PostItem";
+import SidebarCard from "@/components/blog/SideBarCard";
 import { usePosts } from "@/context/PostsContext";
-import SkeletonPost from "@/components/SkeletonPost";
+import SkeletonPost from "@/components/blog/SkeletonPost";
 import Footer from "@/components/Footer";
 
 export default function Home() {

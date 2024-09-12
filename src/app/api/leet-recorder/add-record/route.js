@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { auth, db } from "@/config/firebase";
+import { db } from "@/config/firebase";
 import {
   collection,
   doc,
@@ -12,15 +12,6 @@ import {
 } from "firebase/firestore";
 
 export async function POST(req) {
-  const user = auth.currentUser;
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   try {
     const formData = await req.json();
 

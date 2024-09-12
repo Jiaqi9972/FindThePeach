@@ -2,8 +2,8 @@
 
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import PostTitle from "@/components/PostTitle";
-import SidebarCard from "@/components/SideBarCard";
+import PostTitle from "@/components/blog/PostTitle";
+import SidebarCard from "@/components/blog/SideBarCard";
 import { usePosts } from "@/context/PostsContext";
 
 function ArchivePage() {
