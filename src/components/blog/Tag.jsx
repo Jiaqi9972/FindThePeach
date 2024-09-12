@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { badgeVariants } from "./ui/badge";
+import { badgeVariants } from "@/components/ui/badge";
 
 export default function Tag({ tag, count }) {
   function kababify(text) {

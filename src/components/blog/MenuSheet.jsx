@@ -1,12 +1,12 @@
 import { Book } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
+} from "@/components/ui/sheet";
 import Link from "next/link";
 
 export default function MenuSheet({ title, contents, path }) {

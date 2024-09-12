@@ -28,7 +28,7 @@ import { useEffect, useState } from "react";
 import { eachDayOfInterval, format } from "date-fns";
 import Papa from "papaparse";
 import { useToast } from "@/components/ui/use-toast";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -50,6 +50,18 @@ import {
 } from "@/components/ui/table";
 import Footer from "@/components/Footer";
 import { auth } from "@/config/firebase";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import RecordForm from "@/components/leet-recorder/RecordForm";
 
 const recordFormSchema = z.object({
   problemId: z.string().min(0, { message: "Problem ID is required" }),
@@ -81,7 +93,12 @@ ChartJS.register(
 
 function LeetRecorderPage() {
   const user = auth.currentUser;
+  const { toast } = useToast();
 
+  /*
+      Record Form
+      type the cnlink or enlink and get the details automatically
+  */
   const recordForm = useForm({
     resolver: zodResolver(recordFormSchema),
     defaultValues: {
@@ -96,6 +113,71 @@ function LeetRecorderPage() {
     },
   });
 
+  /*
+      Function to get leetcode problem details and update the form
+   */
+  const cnLink = recordForm.watch("cnLink");
+  const enLink = recordForm.watch("enLink");
+
+  useEffect(() => {
+    const fetchLeetcodeData = async (link) => {
+      if (!link) return;
+
+      try {
+        const response = await fetch(
+          `/api/leet-recorder/get-leetcode-data?link=${link}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.question) {
+            const {
+              questionFrontendId,
+              title,
+              titleSlug,
+              translatedTitle,
+              difficulty,
+            } = data.question;
+
+            recordForm.setValue("problemId", questionFrontendId);
+            recordForm.setValue("title", title);
+            recordForm.setValue("translatedTitle", translatedTitle);
+            recordForm.setValue("difficulty", difficulty);
+            recordForm.setValue(
+              "cnLink",
+              link.includes("leetcode.cn")
+                ? link
+                : `https://leetcode.cn/problems/${titleSlug}/`
+            );
+            recordForm.setValue(
+              "enLink",
+              link.includes("leetcode.com")
+                ? link
+                : `https://leetcode.com/problems/${titleSlug}/`
+            );
+          }
+        } else {
+          console.error("Failed to fetch problem data");
+        }
+      } catch (error) {
+        console.error("Error fetching problem data:", error);
+      }
+    };
+
+    if (cnLink) fetchLeetcodeData(cnLink);
+    else if (enLink) fetchLeetcodeData(enLink);
+  }, [cnLink, enLink, recordForm]);
+
+  /*
+      Upload records csv file
+  */
   const fileForm = useForm({
     resolver: zodResolver(fileFormSchema),
     defaultValues: {
@@ -103,8 +185,9 @@ function LeetRecorderPage() {
     },
   });
 
-  const { toast } = useToast();
-
+  /*
+      Add single record
+  */
   const onSubmitRecord = async (data) => {
     try {
       const response = await fetch("/api/leet-recorder/add-record", {
@@ -137,6 +220,34 @@ function LeetRecorderPage() {
     }
   };
 
+  /*
+      Delete single record
+  */
+  const deleteRecord = async (problemId, currentDay) => {
+    try {
+      const response = await fetch("/api/leet-recorder/delete-record", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ problemId, currentDay }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Record deleted:", result);
+      } else {
+        const error = await response.json();
+        console.error("Error deleting record:", error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  /*
+      Add multiple records with csv file
+  */
   const onSubmitFile = async (data) => {
     const file = data.file[0];
 
@@ -220,66 +331,9 @@ function LeetRecorderPage() {
     });
   };
 
-  const cnLink = recordForm.watch("cnLink");
-  const enLink = recordForm.watch("enLink");
-
-  useEffect(() => {
-    const fetchLeetcodeData = async (link) => {
-      if (!link) return;
-
-      try {
-        const response = await fetch(
-          `/api/leet-recorder/get-leetcode-data?link=${link}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-
-          if (data.question) {
-            const {
-              questionFrontendId,
-              title,
-              titleSlug,
-              translatedTitle,
-              difficulty,
-            } = data.question;
-
-            recordForm.setValue("problemId", questionFrontendId);
-            recordForm.setValue("title", title);
-            recordForm.setValue("translatedTitle", translatedTitle);
-            recordForm.setValue("difficulty", difficulty);
-            recordForm.setValue(
-              "cnLink",
-              link.includes("leetcode.cn")
-                ? link
-                : `https://leetcode.cn/problems/${titleSlug}/`
-            );
-            recordForm.setValue(
-              "enLink",
-              link.includes("leetcode.com")
-                ? link
-                : `https://leetcode.com/problems/${titleSlug}/`
-            );
-          }
-        } else {
-          console.error("Failed to fetch problem data");
-        }
-      } catch (error) {
-        console.error("Error fetching problem data:", error);
-      }
-    };
-
-    if (cnLink) fetchLeetcodeData(cnLink);
-    else if (enLink) fetchLeetcodeData(enLink);
-  }, [cnLink, enLink, recordForm]);
-
-  // chart
+  /*
+      Handle chart
+  */
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [records, setRecords] = useState([]);
   const [currentDay, setCurrentDay] = useState(
@@ -387,7 +441,9 @@ function LeetRecorderPage() {
     }
   };
 
-  // problem data
+  /*
+      Get records for current date
+  */
   const [problemData, setProblemData] = useState({});
 
   const fetchProblemData = async (problemId) => {
@@ -421,7 +477,9 @@ function LeetRecorderPage() {
     });
   }, [currentDay, records, problemData]);
 
-  // fetch counts
+  /*
+      Get monthly and total counts
+  */
   const [counts, setCounts] = useState({});
   const [totalCounts, setTotalCounts] = useState({
     Easy: 0,
@@ -490,7 +548,7 @@ function LeetRecorderPage() {
     <div>
       <Header />
       <main className="container flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-4">
-        {user && (
+        {/* {user && (
           <>
             <Sheet>
               <SheetTrigger asChild>
@@ -681,7 +739,9 @@ function LeetRecorderPage() {
               </SheetContent>
             </Sheet>
           </>
-        )}
+        )} */}
+
+        {user && <RecordForm />}
 
         <div className="flex flex-row gap-8 pb-12 text-xl">
           <h2 className="flex flex-col">
@@ -742,6 +802,7 @@ function LeetRecorderPage() {
                   <TableHead>Difficulty</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Translated Title</TableHead>
+                  <TableHead>Delete Record</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -773,6 +834,36 @@ function LeetRecorderPage() {
                         ) : (
                           "Loading..."
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <Trash2 />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure to delete this record?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete your record.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  deleteRecord(record.problemId, currentDay)
+                                }
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </TableCell>
                     </TableRow>
                   ))}

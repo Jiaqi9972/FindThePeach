@@ -2,12 +2,12 @@
 
 import ReactMarkdown from "react-markdown";
 import Header from "@/components/Header";
-import SidebarCard from "@/components/SideBarCard";
+import SidebarCard from "@/components/blog/SideBarCard";
 import React, { useEffect, useState } from "react";
 import rehypeSlug from "rehype-slug";
-import Tag from "@/components/Tag";
+import Tag from "@/components/blog/Tag";
 import { Calendar, Tags } from "lucide-react";
-import MenuSheet from "@/components/MenuSheet";
+import MenuSheet from "@/components/blog/MenuSheet";
 
 const CustomH1 = ({ node, ...props }) => (
   <h2 className="text-2xl pb-4" {...props} />

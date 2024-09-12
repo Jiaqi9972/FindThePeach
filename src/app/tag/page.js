@@ -1,9 +1,9 @@
 "use client";
 
 import Header from "@/components/Header";
-import Tag from "@/components/Tag";
+import Tag from "@/components/blog/Tag";
 import { Tags } from "lucide-react";
-import PostTitle from "@/components/PostTitle";
+import PostTitle from "@/components/blog/PostTitle";
 import { usePosts } from "@/context/PostsContext";
 import Footer from "@/components/Footer";
 
