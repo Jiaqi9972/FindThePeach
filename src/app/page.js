@@ -33,7 +33,7 @@ export default function Home() {
       </div>
 
       {/* Footer with z-20 to ensure it stays above ShapeEffect */}
-      <footer className="relative z-20">
+      <footer className="relative z-15">
         <Footer />
       </footer>
     </div>
