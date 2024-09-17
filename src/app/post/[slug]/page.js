@@ -1,7 +1,6 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import Header from "@/components/Header";
 import SidebarCard from "@/components/blog/SideBarCard";
 import React, { useEffect, useState } from "react";
 import rehypeSlug from "rehype-slug";
@@ -51,46 +50,43 @@ export default function PostPage({ params }) {
   }
 
   return (
-    <div>
-      <Header />
-      <main className="container pt-8 flex gap-8 text-primary">
-        <MenuSheet title="Menu" contents={headings} path={`/post/${slug}`} />
-        <div className="w-full md:w-3/4">
-          <h1 className="text-4xl pb-8">{post.title}</h1>
-          <div className="flex gap-8 items-center pb-8">
-            <div className="flex gap-2 items-center">
-              <Calendar className="h-4 w-4" />
-              <time dateTime={post.date}>{post.date}</time>
-            </div>
-            <div className="flex gap-2 items-center">
-              <Tags />
-              {post.tags?.map((tag) => (
-                <Tag tag={tag} key={tag} />
-              ))}
-            </div>
+    <main className="container pt-8 flex gap-8 text-primary">
+      <MenuSheet title="Menu" contents={headings} path={`/post/${slug}`} />
+      <div className="w-full md:w-3/4">
+        <h1 className="text-4xl pb-8">{post.title}</h1>
+        <div className="flex gap-8 items-center pb-8">
+          <div className="flex gap-2 items-center">
+            <Calendar className="h-4 w-4" />
+            <time dateTime={post.date}>{post.date}</time>
           </div>
+          <div className="flex gap-2 items-center">
+            <Tags />
+            {post.tags?.map((tag) => (
+              <Tag tag={tag} key={tag} />
+            ))}
+          </div>
+        </div>
 
-          <ReactMarkdown
-            rehypePlugins={[rehypeSlug]}
-            components={{
-              h1: CustomH1,
-              p: CustomParagraph,
-            }}
-          >
-            {post.content}
-          </ReactMarkdown>
+        <ReactMarkdown
+          rehypePlugins={[rehypeSlug]}
+          components={{
+            h1: CustomH1,
+            p: CustomParagraph,
+          }}
+        >
+          {post.content}
+        </ReactMarkdown>
+      </div>
+      <div className="hidden md:block md:w-1/4">
+        <div className="sticky top-8">
+          <SidebarCard
+            type="menu"
+            title="Menu"
+            contents={headings}
+            path={`/post/${post.slug}`}
+          />
         </div>
-        <div className="hidden md:block md:w-1/4">
-          <div className="sticky top-8">
-            <SidebarCard
-              type="menu"
-              title="Menu"
-              contents={headings}
-              path={`/post/${post.slug}`}
-            />
-          </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

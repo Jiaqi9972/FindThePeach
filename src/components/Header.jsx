@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import { ArrowBigUp, Github, LogOut, Menu, Moon, Sun } from "lucide-react";
+import { ArrowBigUp, Github, Menu, Moon, Sun } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -18,10 +18,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import Link from "next/link";
-import { auth } from "@/config/firebase";
-import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { useContext } from "react";
 
 function Header() {
   const { setTheme } = useTheme();
@@ -33,10 +29,8 @@ function Header() {
     });
   };
 
-  const router = useRouter();
-
   return (
-    <header className="py-4 border-b">
+    <header className="py-4 border-b relative z-20">
       <Button
         variant="outline"
         size="icon"

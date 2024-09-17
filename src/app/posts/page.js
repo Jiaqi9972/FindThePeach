@@ -1,6 +1,5 @@
 "use client";
 
-import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import {
   Pagination,
@@ -15,7 +14,6 @@ import PostItem from "@/components/blog/PostItem";
 import SidebarCard from "@/components/blog/SideBarCard";
 import { usePosts } from "@/context/PostsContext";
 import SkeletonPost from "@/components/blog/SkeletonPost";
-import Footer from "@/components/Footer";
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,75 +38,66 @@ export default function Home() {
   const { tags } = usePosts();
 
   return (
-    <div>
-      <Header />
-      <main className="container">
-        <div className="flex gap-8">
-          <div className="w-full md:w-3/4">
-            {posts && posts.length > 0
-              ? posts.map((post) => (
-                  <PostItem
-                    key={post.slug}
-                    slug={post.slug}
-                    title={post.title}
-                    description={post.description}
-                    tags={post.tags}
-                    date={post.date}
-                  />
-                ))
-              : Array.from({ length: 5 }).map((_, index) => (
-                  <SkeletonPost key={index} />
-                ))}
-            <Pagination className="pt-4">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
+    <main className="container">
+      <div className="flex gap-8">
+        <div className="w-full md:w-3/4">
+          {posts && posts.length > 0
+            ? posts.map((post) => (
+                <PostItem
+                  key={post.slug}
+                  slug={post.slug}
+                  title={post.title}
+                  description={post.description}
+                  tags={post.tags}
+                  date={post.date}
+                />
+              ))
+            : Array.from({ length: 5 }).map((_, index) => (
+                <SkeletonPost key={index} />
+              ))}
+          <Pagination className="pt-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage <= 1}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }).map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
                     href="#"
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage <= 1}
-                  />
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={currentPage === index + 1 ? "font-bold" : ""}
+                  >
+                    {index + 1}
+                  </PaginationLink>
                 </PaginationItem>
-                {Array.from({ length: totalPages }).map((_, index) => (
-                  <PaginationItem key={index}>
-                    <PaginationLink
-                      href="#"
-                      onClick={() => setCurrentPage(index + 1)}
-                      className={currentPage === index + 1 ? "font-bold" : ""}
-                    >
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage >= totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-          <div className="hidden md:block md:w-1/4 pt-8">
-            <div className="sticky top-8">
-              <SidebarCard
-                type="tags"
-                title="Tags"
-                contents={tags}
-                path="/tag"
-              />
-            </div>
+              ))}
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage >= totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+        <div className="hidden md:block md:w-1/4 pt-8">
+          <div className="sticky top-8">
+            <SidebarCard type="tags" title="Tags" contents={tags} path="/tag" />
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </main>
   );
 }

@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer>
+    <footer className="relative z-20">
       <div className="flex flex-col items-center justify-center py-6">
         <span>
           Powered by <a href="https://nextjs.org/">Next.js</a>,{" "}
