@@ -22,7 +22,6 @@ import { auth } from "@/config/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-import { UserContext } from "@/context/UserContext";
 
 function Header() {
   const { setTheme } = useTheme();
@@ -35,7 +34,6 @@ function Header() {
   };
 
   const router = useRouter();
-  const { user, loadingUser } = useContext(UserContext);
 
   return (
     <header className="py-4 border-b">
@@ -47,19 +45,6 @@ function Header() {
       >
         <ArrowBigUp />
       </Button>
-      {!loadingUser && user && (
-        <Button
-          variant="secondary"
-          size="icon"
-          className="fixed bottom-16 right-4"
-          onClick={() => {
-            signOut(auth);
-            router.push("/");
-          }}
-        >
-          <LogOut />
-        </Button>
-      )}
       <div className="container flex flex-row justify-between items-center">
         <Sheet>
           <SheetTrigger asChild>
