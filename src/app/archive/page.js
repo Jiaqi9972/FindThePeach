@@ -2,6 +2,7 @@
 
 import PostTitle from "@/components/blog/PostTitle";
 import SidebarCard from "@/components/blog/SideBarCard";
+import ScrollToTop from "@/components/ScrollToTop";
 import { usePosts } from "@/context/PostsContext";
 
 function ArchivePage() {
@@ -20,6 +21,7 @@ function ArchivePage() {
 
   return (
     <main className="container flex gap-8 mt-8">
+      <ScrollToTop />
       <div className="w-full md:w-3/4">
         {sortedYears.map((year) => (
           <div key={year} className="pb-16">

@@ -1,0 +1,162 @@
+---
+title: "Next.js 14 Blog: Architecture and Tips from My Experience"
+date: "2024-11-17"
+description: "Experiences on building personal blog."
+tags: ["blog", "next.js", "mdx"]
+---
+
+After building my personal blog with Next.js 14, I'd like to share some insights and tips that might help you if you're considering a similar project.
+
+## 1. Why Next.js for Blogging?
+
+When developers decide to create a personal blog, **_[Jeykll](https://jekyllrb.com/)_** is often the first choice that comes to mind. And for good reasons - Jekyll has been the go-to static site generator for developer blogs for over a decade, especially given its seamless integration with GitHub Pages.
+
+### Understanding Jekyll
+
+Jekyll is a static site generator built in Ruby that transforms plain text files (typically written in Markdown) into static websites. Its popularity among developers stems from several factors:
+
+- **GitHub Pages Integration**: Free hosting and automatic builds
+- **Simple Setup**: Write in Markdown, push to GitHub, and you're done
+- **Large Theme Ecosystem**: Thousands of ready-to-use themes
+- **Blog-Focused**: Built specifically for blogging
+- **No Database Required**: Content stored in text files
+
+### Why Consider Next.js Instead?
+
+While Jekyll excels at creating simple blogs, both Jekyll and Next.js can achieve similar functionalities like comments, search, and interactive features. However, the key difference lies in how these features are implemented. Next.js offers a more integrated and developer-friendly approach, especially for those familiar with the React ecosystem.
+
+#### Implementation Comparison
+
+Let's look at how both handle common blog features:
+
+**Comments System:**
+
+```javascript
+// Jekyll: Usually relies on third-party service
+<!-- Disqus Integration -->
+<div id="disqus_thread"></div>
+<script src="https://disqus.com/embed.js"></script>
+
+// Next.js: Can be fully integrated
+export function Comments() {
+  const [comments, setComments] = useState([])
+  // Full control over UI, data flow, and user experience
+  return <CommentSection comments={comments} />
+}
+```
+
+**Search Functionality:**
+
+```javascript
+// Jekyll: Typically uses external services like Algolia
+<script src="algolia.min.js"></script>
+<div id="search-box"></div>
+
+// Next.js: Native implementation
+export async function searchPosts(query) {
+  'use server'
+  const posts = await getAllPosts()
+  return posts.filter(post =>
+    post.title.toLowerCase().includes(query.toLowerCase())
+  )
+}
+```
+
+#### Why Next.js Makes These Features Better
+
+- **Unified Development Experience**
+  - Single tech stack (JavaScript/React)
+  - Consistent development patterns
+  - Integrated tooling and debugging
+  - TypeScript support out of the box
+- **Better Integration**
+  - Features are part of your application, not external add-ons
+  - Shared styling and theming
+  - Consistent error handling
+  - Better performance control
+- **Enhanced Control**
+  - Customize every aspect of functionality
+  - Fine-tune performance
+  - Handle edge cases
+  - Better error handling
+- **Scalability**
+  - Start simple, add complexity as needed
+  - No need to switch platforms as requirements grow
+  - Consistent architecture as you scale
+
+## 2. Understanding Server vs Client Components
+
+One of Next.js 14's key features is the clear distinction between Server and Client Components. Here's how I utilize them in my blog:
+
+### Server Components
+
+Used for:
+
+- Static pages (homepage)
+- Article rendering
+- Metadata handling
+- File system operations
+
+```javascript
+// app/page.js
+export default function Home() {
+  return (
+    <main>
+      <h1>Welcome to my blog!</h1>
+      {/* Static content */}
+    </main>
+  );
+}
+```
+
+### Client Components
+
+Used for:
+
+- Pagination
+- Theme switching
+- Animations
+- Comments system
+
+```javascript
+// components/Pagination.jsx
+"use client";
+export default function Pagination({ currentPage, totalPages }) {
+  // Interactive logic
+}
+```
+
+## 3. MDX Implementation
+
+MDX brings the power of React components to markdown files. Here's how I structure my blog posts:
+
+```markdown
+---
+title: Understanding Next.js Architecture
+date: 2024-03-17
+tags: [nextjs, react]
+description: A deep dive into Next.js blog architecture
+---
+
+Content goes here...
+```
+
+File naming convention:
+
+```markdown
+YYYY-MM-DD-article-slug.mdx
+```
+
+## 4. Further Improvement
+
+### Server-Side Optimization for Posts Page
+
+Currently, my posts page fetches data through client-side API calls. While this works well, we could optimize the first page load by implementing server-side rendering. This would provide:
+
+- Better initial page load performance
+- Improved SEO
+- Smoother user experience
+
+### Adding Disqus Comments System
+
+A blog without comments feels incomplete. While Next.js allows us to build a custom comments system, Disqus offers a proven solution.

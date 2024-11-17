@@ -9,7 +9,9 @@ export function loadAllPosts() {
   if (allPosts) return allPosts;
 
   const postsDirectory = path.join(process.cwd(), "posts");
-  const filenames = fs.readdirSync(postsDirectory);
+  const filenames = fs
+    .readdirSync(postsDirectory)
+    .filter((filename) => filename !== ".DS_Store");
 
   allPosts = filenames
     .map((filename) => {

@@ -14,6 +14,7 @@ import PostItem from "@/components/blog/PostItem";
 import SidebarCard from "@/components/blog/SideBarCard";
 import { usePosts } from "@/context/PostsContext";
 import SkeletonPost from "@/components/blog/SkeletonPost";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,6 +40,7 @@ export default function Home() {
 
   return (
     <main className="container">
+      <ScrollToTop />
       <div className="flex gap-8">
         <div className="w-full md:w-3/4">
           {posts && posts.length > 0

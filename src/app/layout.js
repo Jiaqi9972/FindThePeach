@@ -11,6 +11,9 @@ const firaCode = Fira_Code({ subsets: ["latin"] });
 export const metadata = {
   title: "Find the peach",
   description: "Personal Blog",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }) {

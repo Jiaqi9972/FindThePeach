@@ -22,24 +22,9 @@ import Link from "next/link";
 function Header() {
   const { setTheme } = useTheme();
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
   return (
-    <header className="py-4 border-b relative z-20">
-      <Button
-        variant="outline"
-        size="icon"
-        className="fixed bottom-4 right-4"
-        onClick={scrollToTop}
-      >
-        <ArrowBigUp />
-      </Button>
-      <div className="container flex flex-row justify-between items-center">
+    <header className="h-16 border-b relative z-20 flex items-center">
+      <div className="container flex flex-row justify-between items-center h-full">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden">

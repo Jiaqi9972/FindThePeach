@@ -4,6 +4,7 @@ import Tag from "@/components/blog/Tag";
 import { Tags } from "lucide-react";
 import PostTitle from "@/components/blog/PostTitle";
 import { usePosts } from "@/context/PostsContext";
+import ScrollToTop from "@/components/ScrollToTop";
 
 function TagPage() {
   const { posts, tags } = usePosts();
@@ -21,6 +22,7 @@ function TagPage() {
 
   return (
     <main className="container py-4">
+      <ScrollToTop />
       <div className="flex flex-col items-center justify-center py-8">
         <div className="flex flex-row gap-4">
           <Tags />

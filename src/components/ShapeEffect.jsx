@@ -1,35 +1,73 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Circle, Rectangle, Triangle } from "../lib/shape";
+import React, { useCallback, useEffect, useRef } from "react";
+import { Fruit } from "@/lib/shape";
 
-const Shapes = [Triangle, Rectangle, Circle];
-
-// https://tailwindcss.com/docs/customizing-colors
-const colors = [
-  "#f97316",
-  "#f59e0b",
-  "#eab308",
-  "#84cc16",
-  "#22c55e",
-  "#10b981",
-  "#14b8a6",
-  "#06b6d4",
-  "#0ea5e9",
-  "#3b82f6",
-  "#6366f1",
-  "#8b5cf6",
-  "#a855f7",
-  "#d946ef",
-  "#ec4899",
-  "#f43f5e",
+// List of fruit names corresponding to image keys
+const fruitNames = [
+  "Ancient_Fruit",
+  "Apricot",
+  "Banana",
+  "Cherry",
+  "Melon",
+  "Pomegranate",
+  "Apple",
+  "Coconut",
+  "Orange",
+  "Strawberry",
+  "Starfruit",
+  "Blueberry",
+  "Grape",
+  "Peach",
+  "Cranberries",
+  "Mango",
+  "Pineapple",
 ];
 
 export default function ShapeEffect({ count, sizes }) {
-  const [mounted, setMounted] = useState(false);
   const canvas = useRef(null);
   const shapes = useRef([]);
+  const images = useRef({}); // Use useRef to store images
 
+  // Load images in useEffect to ensure it runs only on the client
+  useEffect(() => {
+    const imagePaths = [
+      "Ancient_Fruit.png",
+      "Apricot.png",
+      "Banana.png",
+      "Cherry.png",
+      "Cranberries.png",
+      "Mango.png",
+      "Pineapple.png",
+      "Melon.png",
+      "Pomegranate.png",
+      "Apple.png",
+      "Coconut.png",
+      "Orange.png",
+      "Strawberry.png",
+      "Starfruit.png",
+      "Blueberry.png",
+      "Grape.png",
+      "Peach.png",
+    ];
+
+    const loadedImages = {};
+    imagePaths.forEach((fileName) => {
+      const key = fileName.split(".")[0];
+      const img = new window.Image();
+      img.src = `/fruits/${fileName}`;
+      loadedImages[key] = img;
+    });
+
+    // Load mark image
+    const markImage = new window.Image();
+    markImage.src = "/mark.png";
+    loadedImages["mark"] = markImage;
+
+    images.current = loadedImages;
+  }, []);
+
+  // Adjust the canvas size to fit its container
   const resize = useCallback(() => {
     if (!canvas.current) return;
 
@@ -38,6 +76,7 @@ export default function ShapeEffect({ count, sizes }) {
     canvas.current.height = rect.height;
   }, []);
 
+  // Fill the canvas with random fruit shapes
   const fill = useCallback(() => {
     if (!canvas.current) return;
     const ctxWidth = canvas.current.width;
@@ -45,16 +84,17 @@ export default function ShapeEffect({ count, sizes }) {
     const firstTime = shapes.current.length === 0;
 
     while (shapes.current.length < count) {
-      const ShapeCtor = Shapes[Math.floor(Math.random() * Shapes.length)];
-      const color = colors[Math.floor(Math.random() * colors.length)];
+      const fruitName =
+        fruitNames[Math.floor(Math.random() * fruitNames.length)];
       const size = sizes[0] + Math.random() * (sizes[1] - sizes[0]);
       const x = firstTime ? Math.random() * ctxWidth : -size;
       const y = Math.random() * ctxHeight;
 
-      shapes.current.push(new ShapeCtor(x, y, size, color));
+      shapes.current.push(new Fruit(x, y, size, fruitName, images.current));
     }
   }, [count, sizes]);
 
+  // Draw all shapes on the canvas
   const draw = useCallback(() => {
     if (!canvas.current) return;
     const ctx = canvas.current.getContext("2d");
@@ -64,38 +104,61 @@ export default function ShapeEffect({ count, sizes }) {
     ctx.clearRect(0, 0, ctxWidth, ctxHeight);
 
     shapes.current.forEach((shape) => {
-      shape.move();
-      shape.draw(ctx);
+      shape.move(); // Update position
+      shape.draw(ctx); // Draw shape on canvas
     });
 
+    // Remove shapes that move off the canvas
     shapes.current = shapes.current.filter((shape) => {
       return shape.x - shape.size < ctxWidth;
     });
   }, []);
 
+  // Animation loop
   const tick = useCallback(() => {
     fill();
     draw();
     requestAnimationFrame(tick);
   }, [fill, draw]);
 
+  // Handle clicks to trigger events on specific shapes
+  const handleWindowClick = useCallback((event) => {
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    shapes.current.forEach((shape) => {
+      if (
+        mouseX >= shape.x - shape.size / 2 &&
+        mouseX <= shape.x + shape.size / 2 &&
+        mouseY >= shape.y - shape.size / 2 &&
+        mouseY <= shape.y + shape.size / 2
+      ) {
+        if (shape.imageKey === "Peach") {
+          shape.shake();
+          shape.displayMark();
+        }
+      }
+    });
+  }, []);
+
+  // Initialize the animation and event listeners
   useEffect(() => {
     resize();
     tick();
-    setMounted(true);
     window.addEventListener("resize", resize);
+    window.addEventListener("click", handleWindowClick);
 
     return () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("click", handleWindowClick);
     };
-  }, [resize, tick]);
+  }, [resize, tick, handleWindowClick]);
 
   return (
     <canvas
       ref={canvas}
-      className={`w-full h-full transition-opacity duration-300 ${
-        mounted ? "opacity-100" : "opacity-0"
-      }`}
+      className="w-full h-full"
+      style={{ pointerEvents: "none" }}
     />
   );
 }

@@ -1,100 +1,111 @@
-function createPolygonPath2D(points) {
-  const path = new Path2D();
-
-  points.forEach((point, index) => {
-    if (index === 0) {
-      path.moveTo(point.x, point.y);
-    } else {
-      path.lineTo(point.x, point.y);
-    }
-  });
-
-  return path;
-}
-
+// shape.js
 export class Shape {
-  constructor(x, y, size, color) {
+  constructor(x, y, size, imageKey) {
     this.x = x;
     this.y = y;
     this.size = size;
-    this.color = color;
+    this.imageKey = imageKey;
     this.angle = 2 * Math.PI * Math.random();
     this.rotate = Math.random() * Math.PI;
     this.speed = 0.2 + Math.random() * 0.5;
   }
 
+  // Update position
   move() {
     this.x += this.speed;
     this.rotate -= this.speed * 0.006;
   }
 
-  createGradient(ctx) {
-    const size = this.size * 1.5;
-    const endAngle = this.angle + Math.PI;
-
-    const startX = this.x + this.size * Math.sin(this.angle + this.rotate);
-    const startY = this.y + this.size * Math.cos(this.angle + this.rotate);
-    const endX = this.x + size * Math.sin(endAngle + this.rotate);
-    const endY = this.y + size * Math.cos(endAngle + this.rotate);
-
-    const gradient = ctx.createLinearGradient(startX, startY, endX, endY);
-    gradient.addColorStop(0, this.color);
-    gradient.addColorStop(0.3, this.color);
-    gradient.addColorStop(0.85, "#ffffff");
-
-    return gradient;
-  }
-
+  // Abstract draw method
   draw(ctx) {
     throw new Error("draw method should be implemented by subclasses");
   }
 }
 
-export class Polygon extends Shape {
-  constructor(x, y, size, color, sides) {
-    super(x, y, size, color);
-    this.sides = sides;
+export class Fruit extends Shape {
+  constructor(x, y, size, imageKey, images) {
+    super(x, y, size, imageKey);
+    this.images = images; // Store reference to images
+    this.image = images[imageKey];
+
+    this.shaking = false;
+    this.showMark = false;
+    this.markDuration = 0;
+    this.markStartTime = 0;
+    this.originalPosition = { x: this.x, y: this.y };
   }
 
+  // Trigger a shaking effect
+  shake() {
+    this.shaking = true;
+    // Update originalPosition to current position
+    this.originalPosition = { x: this.x, y: this.y };
+    const shakeInterval = setInterval(() => {
+      const offset = Math.random() > 0.5 ? 2 : -2;
+      this.x += offset;
+      this.y += offset;
+
+      setTimeout(() => {
+        this.x = this.originalPosition.x;
+        this.y = this.originalPosition.y;
+      }, 50);
+    }, 50);
+
+    setTimeout(() => {
+      clearInterval(shakeInterval);
+      this.shaking = false;
+    }, 300);
+  }
+
+  // Display an exclamation mark above the fruit
+  displayMark() {
+    this.showMark = true;
+    this.markStartTime = Date.now();
+    this.markDuration = 3000; // Duration in milliseconds
+  }
+
+  // Draw the fruit and its exclamation mark
   draw(ctx) {
+    // Ensure the fruit image is loaded
+    if (!this.image.complete) {
+      this.image.onload = () => {
+        this.draw(ctx);
+      };
+      return;
+    }
+
     const halfSize = this.size / 2;
-    const angle = (Math.PI * 2) / this.sides;
-    const points = [];
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotate);
+    ctx.drawImage(this.image, -halfSize, -halfSize, this.size, this.size);
+    ctx.restore();
 
-    Array.from({ length: this.sides }).forEach((_, i) => {
-      points.push({
-        x: this.x + halfSize * Math.sin(angle * i + this.rotate),
-        y: this.y + halfSize * Math.cos(angle * i + this.rotate),
-      });
-    });
+    // Draw exclamation mark if active
+    if (this.showMark) {
+      const markImage = this.images["mark"];
+      // Ensure the mark image is loaded
+      if (!markImage.complete) {
+        markImage.onload = () => {
+          this.draw(ctx);
+        };
+        return;
+      }
 
-    const path = createPolygonPath2D(points);
-    ctx.fillStyle = this.createGradient(ctx);
-    ctx.fill(path);
-  }
-}
-
-export class Triangle extends Polygon {
-  constructor(x, y, size, color) {
-    super(x, y, size, color, 3);
-  }
-}
-
-export class Rectangle extends Polygon {
-  constructor(x, y, size, color) {
-    super(x, y, size, color, 4);
-  }
-}
-
-export class Circle extends Shape {
-  draw(ctx) {
-    const radius = this.size / 2;
-
-    const path = new Path2D();
-    path.moveTo(0, 0);
-    path.arc(this.x, this.y, radius, 0, 2 * Math.PI);
-
-    ctx.fillStyle = this.createGradient(ctx);
-    ctx.fill(path);
+      const elapsedTime = Date.now() - this.markStartTime;
+      if (elapsedTime > this.markDuration) {
+        this.showMark = false;
+      } else {
+        // Adjust mark size and position
+        const markSize = this.size * 0.6; // Adjusted size factor
+        ctx.drawImage(
+          markImage,
+          this.x - markSize / 2,
+          this.y - this.size - markSize, // Position above the fruit
+          markSize,
+          markSize
+        );
+      }
+    }
   }
 }
