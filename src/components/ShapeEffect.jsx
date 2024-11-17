@@ -22,6 +22,8 @@ const fruitNames = [
   "Cranberries",
   "Mango",
   "Pineapple",
+  "Stardrop",
+  "Sweet_Gem_Berry",
 ];
 
 export default function ShapeEffect({ count, sizes }) {
@@ -49,6 +51,8 @@ export default function ShapeEffect({ count, sizes }) {
       "Blueberry.png",
       "Grape.png",
       "Peach.png",
+      "Stardrop.png",
+      "Sweet_Gem_Berry.png",
     ];
 
     const loadedImages = {};
