@@ -39,7 +39,7 @@ export default function Home() {
   const { tags } = usePosts();
 
   return (
-    <main className="container">
+    <main className="container mt-8 min-h-[calc(100vh-10rem)]">
       <ScrollToTop />
       <div className="flex gap-8">
         <div className="w-full md:w-3/4">

@@ -20,7 +20,7 @@ function ArchivePage() {
   const sortedYears = Object.keys(postsByYear).sort((a, b) => b - a);
 
   return (
-    <main className="container flex gap-8 mt-8">
+    <main className="container flex gap-8 mt-8 min-h-[calc(100vh-10rem)]">
       <ScrollToTop />
       <div className="w-full md:w-3/4">
         {sortedYears.map((year) => (

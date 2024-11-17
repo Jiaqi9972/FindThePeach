@@ -21,7 +21,7 @@ function TagPage() {
   }
 
   return (
-    <main className="container py-4">
+    <main className="container py-4 min-h-[calc(100vh-8rem)]">
       <ScrollToTop />
       <div className="flex flex-col items-center justify-center py-8">
         <div className="flex flex-row gap-4">

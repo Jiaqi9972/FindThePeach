@@ -61,7 +61,7 @@ export default function PostPage({ params }) {
   }
 
   return (
-    <main className="container pt-8 flex gap-8">
+    <main className="container pt-8 flex gap-8 min-h-[calc(100vh-8rem)]">
       <ScrollToTop />
       <MenuSheet title="Menu" contents={headings} path={`/post/${slug}`} />
       <div className="w-full md:w-3/4">
