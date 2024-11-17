@@ -154,7 +154,10 @@ public class LoginRequest {
 
 As we're implementing a custom JWT authentication in this project rather than using Spring Security's default session-based approach or existing JWT libraries, we need to create our own JwtUtil class to handle token operations like generation, validation and user info extraction. Let's look at how to implement this utility class.
 
-- What is JWT_SECRET_KEY and Why Do We Use It?In our JWT authentication implementation, the JWT_SECRET_KEY is a key used for signing and verifying the JWT (JSON Web Token). Its role is to ensure that the contents of the generated token have not been tampered with and that only systems with knowledge of the secret key can verify the validity of the token. JWT is a stateless authentication method that contains user identity information and other claims (such as expiration time and permissions), so the secret key is essential in the entire verification process.
+- What is JWT_SECRET_KEY and Why Do We Use It?
+
+  In our JWT authentication implementation, the JWT_SECRET_KEY is a key used for signing and verifying the JWT (JSON Web Token). Its role is to ensure that the contents of the generated token have not been tampered with and that only systems with knowledge of the secret key can verify the validity of the token. JWT is a stateless authentication method that contains user identity information and other claims (such as expiration time and permissions), so the secret key is essential in the entire verification process.
+
   - Signing: When generating a JWT, the JWT_SECRET_KEY is used to sign the token. The signature ensures the integrity of the token, allowing the server to check if it has been altered when it is sent back to the server.
   - Verification: When a request is received, the server uses the JWT_SECRET_KEY to verify the token in the request header. If the token's signature is valid and has not expired, the request is considered legitimate. If the signature is invalid or the token has been tampered with, the request will be rejected.
   - Security: In production environments, the secret key should be kept private and not hard-coded in the code. It should be stored securely, such as in environment variables or encrypted configuration files. Longer and more complex keys provide better security to prevent brute-force attacks.
@@ -215,7 +218,7 @@ public class JwtUtil {
 
 ## 5. Define Basic API Endpoints (Without Authentication)
 
-In this step, we'll define basic APIs for user registration, login, and health checks. These endpoints won't require authentication for now.
+In this step, we'll define basic APIs for user registration and login. These endpoints won't require authentication for now.
 
 ### API Endpoints Overview
 
